@@ -1,0 +1,37 @@
+.cell{
+    width:15px;
+    height:15px;
+    border:solid black 1px;
+    display: flex;
+    &-opened{
+        background-color: #fff;
+    }
+    &-not_opened{
+        background-color: rgb(228, 228, 228);
+    }
+}
+body{
+    width: 100%;
+}
+.board{
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    
+}
+.row{
+    display: flex;
+    flex-direction: row;
+}
+.shown{
+
+    background-color:red;
+}
+.counter{
+    text-align: center;
+    margin-left:auto;
+    margin-right:auto;
+    
+}
