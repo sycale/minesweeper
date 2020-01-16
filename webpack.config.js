@@ -6,14 +6,14 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: 'babel-loader'
+        use: 'babel-loader',
       },
       {
         test: /\.s[ac]ss$/i,
@@ -23,21 +23,21 @@ module.exports = {
           // Translates CSS into CommonJS
           'css-loader',
           // Compiles Sass to CSS
-          'sass-loader'
-        ]
+          'sass-loader',
+        ],
       },
       {
         test: /\.exec\.js$/,
-        use: ['script-loader']
-      }
-    ]
+        use: ['script-loader'],
+      },
+    ],
   },
   plugins: [
-    //will automatically inject bundle js into ./dist/index.html
+    // will automatically inject bundle js into ./dist/index.html
     new HTMLWebpackPlugin({
-      template: './src/index.html', //source
-      filename: 'index.html' //destination
+      template: './src/index.html', // source
+      filename: 'index.html', // destination
     }),
-    new ExtractTextPlugin('style.css')
-  ]
+    new ExtractTextPlugin('style.css'),
+  ],
 };

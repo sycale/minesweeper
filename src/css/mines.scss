@@ -1,8 +1,9 @@
 .cell{
-    width:15px;
-    height:15px;
+    width:25px;
+    height:25px;
     border:solid black 1px;
     display: flex;
+    align-items: center;
     &-opened{
         background-color: #fff;
     }
@@ -25,13 +26,31 @@ body{
     display: flex;
     flex-direction: row;
 }
-.shown{
 
-    background-color:red;
+.bomb-pic{
+    display: none;
+    width:25px;
 }
+
+
+.shown{
+    display: inline-block;
+}
+
 .counter{
     text-align: center;
     margin-left:auto;
     margin-right:auto;
+    align-items: center;
     
+}
+
+.flag-pic{
+    width:25px;
+    height:25px;
+    
+}
+
+.flagged:after{
+    background-color: red;
 }
