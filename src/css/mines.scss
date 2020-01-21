@@ -1,56 +1,91 @@
-.cell{
-    width:25px;
-    height:25px;
-    border:solid black 1px;
-    display: flex;
-    align-items: center;
-    &-opened{
-        background-color: #fff;
-    }
-    &-not_opened{
-        background-color: rgb(228, 228, 228);
-    }
+.cell {
+  width: 25px;
+  height: 25px;
+  border: solid black 1px;
+  display: flex;
+  align-items: center;
+  &-opened {
+    background-color: #fff;
+  }
+  &-not_opened {
+    background-color: rgb(228, 228, 228);
+  }
 }
-body{
+body {
+  width: 100%;
+}
+.board {
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.bomb-pic {
+  display: none;
+  width: 25px;
+}
+
+.shown {
+  display: inline-block;
+}
+
+.counter {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+}
+
+.flag-pic {
+  width: 25px;
+  height: 25px;
+}
+
+.flagged:after {
+  background-color: red;
+}
+
+.choose-lvl {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  &_btn {
+    width: 200px;
+    height: 50px;
+    outline: none;
+    background-color: white;
+  }
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  &_btn {
+    width: 200px;
+    height: 50px;
+    outline: none;
+    background-color: white;
+  }
+}
+.game-status {
+    margin-top:50px;
     width: 100%;
-}
-.board{
-    justify-content: center;
-    align-content: center;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    
-}
-.row{
-    display: flex;
-    flex-direction: row;
-}
-
-.bomb-pic{
-    display: none;
-    width:25px;
-}
-
-
-.shown{
-    display: inline-block;
-}
-
-.counter{
     text-align: center;
-    margin-left:auto;
-    margin-right:auto;
-    align-items: center;
-    
-}
-
-.flag-pic{
-    width:25px;
-    height:25px;
-    
-}
-
-.flagged:after{
-    background-color: red;
+    justify-content: center;
+    &_text {
+        font-weight: 800;
+        
+    }
 }

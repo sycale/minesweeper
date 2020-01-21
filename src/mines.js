@@ -22,9 +22,6 @@ let rows;
 let columns;
 let amountOfMines;
 let checkpoint = true;
-const timeArr = [];
-let timeStatus = false;
-let time = 0;
 
 function remove(arr, value) {
   for (let i = 0; i < arr.length; i += 1) {
@@ -59,51 +56,6 @@ function revealCell(row, coll) {
   if (mineCount > 0 && $(`[data-order = '${row}_${coll}']`).is(':empty')) {
     $(`[data-order = '${row}_${coll}']`).append(`<span class="counter">${mineCount}</span>`);
   }
-}
-let min = 0;
-let hour = 0;
-let sec = 0;
-
-// Основная функция tick()
-function tick() {
-  sec += 1;
-  if (sec >= 60) {
-    // задаем числовые параметры, меняющиеся по ходу работы программы
-    min += 1;
-    sec -= 60;
-  }
-  if (min >= 60) {
-    hour += 1;
-    min -= 60;
-  }
-  if (sec < 10) {
-    if (min < 10) {
-      if (hour < 10) {
-        $('.timer_text').replaceWith(`<span class = 'timer_text'>0${hour}:0${min}:0${sec}</span>`);
-      } else {
-        $('.timer_text').replaceWith(`<span class = 'timer_text'>${hour}:0${min}:0${sec}</span>`);
-      }
-    } else if (hour < 10) {
-      $('.timer_text').replaceWith(`<span class = 'timer_text'>0${hour}:${min}:0${sec}</span>`);
-    } else {
-      $('.timer_text').replaceWith(`<span class = 'timer_text'>${hour}:${min}:0${sec}</span>`);
-    }
-  } else if (min < 10) {
-    if (hour < 10) {
-      $('.timer_text').replaceWith(`<span class = 'timer_text'>0${hour}:0${min}:${sec}</span>`);
-    } else {
-      $('.timer_text').replaceWith(`<span class = 'timer_text'>${hour}:0${min}:${sec}</span>`);
-    }
-  } else if (hour < 10) {
-    $('.timer_text').replaceWith(`<span class = 'timer_text'>0${hour}:${min}:${sec}</span>`);
-  } else {
-    $('.timer_text').replaceWith(`<span class = 'timer_text'>${hour}:${min}:${sec}</span>`);
-  }
-}
-
-function init() {
-  sec = 0;
-  setInterval(tick, 1000);
 }
 
 function createMines() {
@@ -191,21 +143,10 @@ function revealNeighbourCells(cellRow, cellCol) {
 
 function gameOver() {
   alert('boom');
-  clearTimeout(timer);
   $('.bomb-pic').addClass('shown');
-  $('.cell').bind('click', () => false);
-
   $('body').append(
     "<div class = 'game-status'><span class = 'game-status_text'>Press New Game button to start a new game</span></div>",
   );
-}
-
-function timer() {
-  if (timeStatus) {
-    time += 1;
-    $('.timer_text').replaceWith(`<span class = 'timer_text'>${time}</span>`);
-    setTimeout(timer, 1000);
-  }
 }
 
 function turn() {
@@ -275,18 +216,15 @@ $(document).ready(() => {
   $('#easyLvl').click(() => {
     createField(9, 9, 10);
     checkpoint = true;
-    timeStatus = true;
     turn();
   });
   $('#mediumLvl').click(() => {
     createField(13, 15, 40);
-    timeStatus = true;
     checkpoint = true;
     turn();
   });
   $('#hardLvl').click(() => {
     createField(16, 30, 99);
-    timeStatus = true;
     checkpoint = true;
     turn();
   });
@@ -296,7 +234,6 @@ $(document).ready(() => {
   });
   $('#newgame').click(() => {
     newGame();
-    timeStatus = true;
     turn();
   });
 });
