@@ -279,7 +279,7 @@ $(document).ready(() => {
     $('#mediumLvl').removeClass('active-field');
     $('#hardLvl').removeClass('active-field');
     $('#easyLvl').addClass('active-field');
-    createField(9, 9, 80);
+    createField(9, 9, 10);
     checkpoint = true;
     turn();
   });
