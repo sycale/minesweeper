@@ -142,14 +142,74 @@ function revealNeighbourCells(cellRow, cellCol) {
 }
 
 function gameOver() {
-  alert('boom');
   $('.bomb-pic').addClass('shown');
+  $('.lose-alert').css('display', 'block');
   $('body').append(
     "<div class = 'game-status'><span class = 'game-status_text'>Press New Game button to start a new game</span></div>",
   );
 }
+let win;
+let end;
+function timer() {
+  let seconds = 0;
+  let minutes = 0;
+  const timerVar = setInterval(() => {
+    seconds += 1;
+    if (seconds === 60) {
+      minutes += 1;
+      seconds = 0;
+    }
+    if (end) {
+      clearInterval(timerVar);
+    }
+    if (win) {
+      if (minutes > 10 && seconds > 10) {
+        $('.win-time').append(`<span class = "attemptsBox">00:${minutes}:${seconds}</span>`);
+      } else if (minutes < 10 && seconds < 10) {
+        $('.win-time').append(`<span class = "attemptsBox">00:0${minutes}:0${seconds}</span>`);
+      } else if (minutes < 10 && seconds > 10) {
+        $('.win-time').append(`<span class = "attemptsBox">00:0${minutes}:${seconds}</span>`);
+      } else if (minutes > 10 && seconds < 10) {
+        $('.win-time').append(`<span class = "attemptsBox">00:${minutes}:0${seconds}</span>`);
+      }
+      clearInterval(timerVar);
+    }
+    
+    if (seconds / 10 < 1 && minutes / 10 < 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer" id = "storage"><span class = "timer_text">00:0${minutes}:0${seconds}</span></div> `,
+      );
+    } else if (seconds / 10 > 1 && minutes / 10 < 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer" ><span class = "timer_text">00:0${minutes}:${seconds}</span></div> `,
+      );
+    } else if (minutes / 10 > 1 && seconds / 10 < 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer"><span class = "timer_text">00:${minutes}:0${seconds}<span></div> `,
+      );
+    } else if (minutes / 10 === 1 && seconds / 10 === 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer"><span class = "timer_text">00:${minutes}:${seconds}</span></div> `,
+      );
+    } else if (minutes / 10 === 1 && seconds / 10 < 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer"><span class = "timer_text">00:${minutes}:0${seconds}</span></div> `,
+      );
+    } else if (minutes / 10 < 1 && seconds / 10 === 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer"><span class = "timer_text">00:0${minutes}:${seconds}</span></div> `,
+      );
+    }
+    
+  }, 1000);
+  timerVar;
+}
 
 function turn() {
+  win = false;
+  end = false;
+  timer();
+  $('.game-status').empty();
   $('.cell').on({
     rightclick() {
       if (!$(this).hasClass('cell-opened') && !$(this).hasClass('flagged')) {
@@ -161,6 +221,8 @@ function turn() {
       } else {
         console.log(2);
         $(this).removeClass('flagged');
+        $('.timer').replaceWith(`<div class = "timer">00:${minutes}:0${seconds}</div> `);
+
         $(this)
           .children('.flag-pic')
           .remove();
@@ -173,6 +235,8 @@ function turn() {
         console.log('no');
       } else if (checkIfHasMinesObject.call(this)) {
         checkpoint = false;
+        end = true;
+        $(this).css('background-color', 'red');
         gameOver();
       } else {
         const cellRow = parseInt(
@@ -187,8 +251,8 @@ function turn() {
         );
         revealNeighbourCells(cellRow, cellCol);
         if (userWins()) {
-          timeArr.push(time);
-          alert('You win');
+          win = true;
+          
           const cellRow = parseInt(
             $(this)
               .data('order')
@@ -199,10 +263,8 @@ function turn() {
               .data('order')
               .split('_')[1],
           );
-          revealCell(cellRow, cellCol);
           $('.bomb-pic').addClass('shown');
           $('.cell').bind('click', () => false);
-          timeStatus = false;
           $('body').append(
             "<div class = 'game-status'><span class = 'game-status_text>Press New Game button to start a new game</span></div>'",
           );
@@ -214,17 +276,27 @@ function turn() {
 
 $(document).ready(() => {
   $('#easyLvl').click(() => {
-    createField(9, 9, 10);
+    $('#mediumLvl').removeClass('active-field');
+    $('#hardLvl').removeClass('active-field');
+    $('#easyLvl').addClass('active-field');
+    createField(9, 9, 80);
     checkpoint = true;
     turn();
   });
   $('#mediumLvl').click(() => {
     createField(13, 15, 40);
+    $('#easyLvl').removeClass('active-field');
+    $('#hardLvl').removeClass('active-field');
+    $('#mediumLvl').addClass('active-field');
     checkpoint = true;
     turn();
   });
   $('#hardLvl').click(() => {
     createField(16, 30, 99);
+    $('#easyLvl').removeClass('active-field');
+    $('#mediumLvl').removeClass('active-field');
+    $('#hardLvl').addClass('active-field');
+
     checkpoint = true;
     turn();
   });
@@ -234,6 +306,7 @@ $(document).ready(() => {
   });
   $('#newgame').click(() => {
     newGame();
+    
     turn();
   });
 });
