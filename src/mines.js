@@ -18,18 +18,14 @@ $.event.special.rightclick = {
   },
 };
 let win;
+let timerVar;
+let amountOfFlags;
+let amountOfMines;
 let seconds = 0;
 let minutes = 0;
-let end = false;
-let timerVar;
-
-function timer() {
-  end = false;
-}
-
+let end;
 let rows;
 let columns;
-let amountOfMines;
 let checkpoint = true;
 
 function remove(arr, value) {
@@ -101,15 +97,18 @@ function createMines() {
 
 function createField(rows_, columns_, mines_) {
   $('.board').empty();
+  amountOfFlags = mines_;
   rows = rows_;
   columns = columns_;
   amountOfMines = mines_;
+  $('.flags').replaceWith(`<div class = "flags">Left flags: ${amountOfFlags}</div>`);
   for (let i = 0; i < rows; i += 1) {
     $('.board').append(`<div class = 'row row-${i}'></div>`);
     for (let j = 0; j < columns; j += 1) {
       $(`.row-${i}`).append(`<div class = "cell cell-not_opened" data-order = '${i}_${j}'></div>`);
     }
   }
+checkpoint = true;
   createMines();
 }
 
@@ -163,8 +162,9 @@ function gameOver() {
 }
 
 let bombed = false;
-
 function turn() {
+  seconds = 0;
+  minutes = 0;
   bombed = false;
   clearInterval(timerVar);
   timerVar = setInterval(() => {
@@ -222,20 +222,24 @@ function turn() {
   $('.game-status').empty();
   $('.cell').on({
     rightclick() {
-      if (!$(this).hasClass('cell-opened') && !$(this).hasClass('flagged')) {
-        $(this).addClass('flagged');
-        console.log(1);
-        $(this).append(
-          "<img src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Flag_icon_orange_4.svg/250px-Flag_icon_orange_4.svg.png' class = 'flag-pic'></img>",
-        );
-      } else {
-        console.log(2);
-        $(this).removeClass('flagged');
-        $('.timer').replaceWith(`<div class = "timer">00:${minutes}:0${seconds}</div> `);
-
-        $(this)
-          .children('.flag-pic')
-          .remove();
+      console.log(amountOfFlags);
+      if (checkpoint) {
+        if (!$(this).hasClass('cell-opened')) {
+          if ($(this).hasClass('flagged')) {
+            $(this).removeClass('flagged');
+            amountOfFlags += 1;
+            $(this)
+              .children('.flag-pic')
+              .remove();
+          } else if (amountOfFlags !== 0) {
+            $(this).addClass('flagged');
+            amountOfFlags -= 1;
+            $(this).append(
+              "<img src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Flag_icon_orange_4.svg/250px-Flag_icon_orange_4.svg.png' class = 'flag-pic'></img>",
+            );
+          }
+          $('.flags').replaceWith(`<div class = "flags">Left flags: ${amountOfFlags}</div>`);
+        }
       }
     },
   });
@@ -290,16 +294,12 @@ $(document).ready(() => {
     $('#mediumLvl').removeClass('active-field');
     $('#hardLvl').removeClass('active-field');
     $('#easyLvl').addClass('active-field');
-    seconds = 0;
-    minutes = 0;
     createField(9, 9, 10);
     $('#newgame').addClass('hidden');
     turn();
   });
   $('#mediumLvl').click(() => {
     createField(13, 15, 40);
-    seconds = 0;
-    minutes = 0;
     $('#easyLvl').removeClass('active-field');
     $('#newgame').addClass('hidden');
     $('#hardLvl').removeClass('active-field');
@@ -308,8 +308,7 @@ $(document).ready(() => {
   });
   $('#hardLvl').click(() => {
     createField(16, 30, 99);
-    seconds = 0;
-    minutes = 0;
+    
     $('#newgame').addClass('hidden');
     $('#easyLvl').removeClass('active-field');
     $('#mediumLvl').removeClass('active-field');
