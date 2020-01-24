@@ -3,7 +3,11 @@
 To start this project just pull it out and write following commands to your terminal 
 <code>
   npm init
-  <br>
+  </code>
+  <code>
+  npm install
+  </code>
+  <code>
   npm start
   </code>
   
