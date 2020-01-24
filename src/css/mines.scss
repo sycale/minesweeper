@@ -79,8 +79,14 @@
     height: 50px;
     outline: none;
     background-color: white;
+    
   }
 }
+
+.hidden {
+  display: none;
+}
+
 .game-status {
   margin-top: 50px;
   width: 100%;

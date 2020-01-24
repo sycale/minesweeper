@@ -17,6 +17,15 @@ $.event.special.rightclick = {
     }
   },
 };
+let win;
+let seconds = 0;
+let minutes = 0;
+let end = false;
+let timerVar;
+
+function timer() {
+  end = false;
+}
 
 let rows;
 let columns;
@@ -108,6 +117,8 @@ function newGame() {
   $('.game-status').empty();
   createField(rows, columns, amountOfMines);
   checkpoint = true;
+  $('#newgame').addClass('hidden');
+  turn();
 }
 
 function userWins() {
@@ -147,59 +158,67 @@ function gameOver() {
   $('body').append(
     "<div class = 'game-status'><span class = 'game-status_text'>Press New Game button to start a new game</span></div>",
   );
+  bombed = true;
+  $('.footer_btn').removeClass('hidden');
 }
-let win;
-let seconds = 0;
-let minutes = 0;
-let end = false;
-const timerVar = setInterval(() => {
-  seconds += 1;
-  if (seconds === 60) {
-    minutes += 1;
-    seconds = 0;
-  }
-  if (win) {
-    if (minutes > 10 && seconds > 10) {
-      $('.win-time').append(`<span class = "attemptsBox">00:${minutes}:${seconds}</span>`);
-    } else if (minutes < 10 && seconds < 10) {
-      $('.win-time').append(`<span class = "attemptsBox">00:0${minutes}:0${seconds}</span>`);
-    } else if (minutes < 10 && seconds > 10) {
-      $('.win-time').append(`<span class = "attemptsBox">00:0${minutes}:${seconds}</span>`);
-    } else if (minutes > 10 && seconds < 10) {
-      $('.win-time').append(`<span class = "attemptsBox">00:${minutes}:0${seconds}</span>`);
-    }
-    clearInterval(timerVar);
-  }
 
-  if (seconds / 10 < 1 && minutes / 10 < 1) {
-    $('.timer').replaceWith(
-      `<div class = "timer" id = "storage"><span class = "timer_text">00:0${minutes}:0${seconds}</span></div> `,
-    );
-  } else if (seconds / 10 > 1 && minutes / 10 < 1) {
-    $('.timer').replaceWith(
-      `<div class = "timer" ><span class = "timer_text">00:0${minutes}:${seconds}</span></div> `,
-    );
-  } else if (minutes / 10 > 1 && seconds / 10 < 1) {
-    $('.timer').replaceWith(
-      `<div class = "timer"><span class = "timer_text">00:${minutes}:0${seconds}<span></div> `,
-    );
-  } else if (minutes / 10 === 1 && seconds / 10 === 1) {
-    $('.timer').replaceWith(
-      `<div class = "timer"><span class = "timer_text">00:${minutes}:${seconds}</span></div> `,
-    );
-  } else if (minutes / 10 === 1 && seconds / 10 < 1) {
-    $('.timer').replaceWith(
-      `<div class = "timer"><span class = "timer_text">00:${minutes}:0${seconds}</span></div> `,
-    );
-  } else if (minutes / 10 < 1 && seconds / 10 === 1) {
-    $('.timer').replaceWith(
-      `<div class = "timer"><span class = "timer_text">00:0${minutes}:${seconds}</span></div> `,
-    );
-  }
-}, 1000);
+let bombed = false;
 
 function turn() {
-  timerVar;
+  bombed = false;
+  clearInterval(timerVar);
+  timerVar = setInterval(() => {
+    seconds += 1;
+    if (seconds === 60) {
+      minutes += 1;
+      seconds = 0;
+    }
+    if (bombed) {
+      clearInterval(timerVar);
+    }
+    if (win) {
+      if (minutes > 10 && seconds > 10) {
+        $('.win-time').append(`<span class = "attemptsBox">00:${minutes}:${seconds}</span>`);
+      } else if (minutes < 10 && seconds < 10) {
+        $('.win-time').append(`<span class = "attemptsBox">00:0${minutes}:0${seconds}</span>`);
+      } else if (minutes < 10 && seconds > 10) {
+        $('.win-time').append(`<span class = "attemptsBox">00:0${minutes}:${seconds}</span>`);
+      } else if (minutes > 10 && seconds < 10) {
+        $('.win-time').append(`<span class = "attemptsBox">00:${minutes}:0${seconds}</span>`);
+      }
+      win = false;
+
+      seconds = 0;
+      minutes = 0;
+      clearInterval(timerVar);
+    }
+
+    if (seconds / 10 < 1 && minutes / 10 < 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer" id = "storage"><span class = "timer_text">00:0${minutes}:0${seconds}</span></div> `,
+      );
+    } else if (seconds / 10 > 1 && minutes / 10 < 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer" ><span class = "timer_text">00:0${minutes}:${seconds}</span></div> `,
+      );
+    } else if (minutes / 10 > 1 && seconds / 10 < 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer"><span class = "timer_text">00:${minutes}:0${seconds}<span></div> `,
+      );
+    } else if (minutes / 10 === 1 && seconds / 10 === 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer"><span class = "timer_text">00:${minutes}:${seconds}</span></div> `,
+      );
+    } else if (minutes / 10 === 1 && seconds / 10 < 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer"><span class = "timer_text">00:${minutes}:0${seconds}</span></div> `,
+      );
+    } else if (minutes / 10 < 1 && seconds / 10 === 1) {
+      $('.timer').replaceWith(
+        `<div class = "timer"><span class = "timer_text">00:0${minutes}:${seconds}</span></div> `,
+      );
+    }
+  }, 1000);
   $('.game-status').empty();
   $('.cell').on({
     rightclick() {
@@ -221,12 +240,12 @@ function turn() {
     },
   });
   $('.cell').click(function () {
+    end = false;
     if (checkpoint) {
       if ($(this).hasClass('cell-opened') || $(this).hasClass('flagged')) {
         console.log('no');
       } else if (checkIfHasMinesObject.call(this)) {
         checkpoint = false;
-        end = true;
         $(this).css('background-color', 'red');
         gameOver();
       } else {
@@ -244,6 +263,7 @@ function turn() {
         if (userWins()) {
           win = true;
 
+          $('.footer_btn').removeClass('hidden');
           const cellRow = parseInt(
             $(this)
               .data('order')
@@ -270,37 +290,30 @@ $(document).ready(() => {
     $('#mediumLvl').removeClass('active-field');
     $('#hardLvl').removeClass('active-field');
     $('#easyLvl').addClass('active-field');
+    seconds = 0;
+    minutes = 0;
     createField(9, 9, 10);
-    if (!end) {
-      clearInterval(timerVar);
-      end = false;
-    } else end = true;
-    checkpoint = true;
+    $('#newgame').addClass('hidden');
     turn();
   });
   $('#mediumLvl').click(() => {
     createField(13, 15, 40);
+    seconds = 0;
+    minutes = 0;
     $('#easyLvl').removeClass('active-field');
+    $('#newgame').addClass('hidden');
     $('#hardLvl').removeClass('active-field');
     $('#mediumLvl').addClass('active-field');
-    checkpoint = true;
-    if (!end) {
-      clearInterval(timerVar);
-      end = false;
-    } else end = true;
     turn();
   });
   $('#hardLvl').click(() => {
     createField(16, 30, 99);
+    seconds = 0;
+    minutes = 0;
+    $('#newgame').addClass('hidden');
     $('#easyLvl').removeClass('active-field');
     $('#mediumLvl').removeClass('active-field');
     $('#hardLvl').addClass('active-field');
-    checkpoint = true;
-    if (!end) {
-      clearInterval(timerVar);
-      end = false;
-    } else end = true;
-    clearInterval(timerVar);
     turn();
   });
 
@@ -308,8 +321,7 @@ $(document).ready(() => {
     $('.bomb-pic').toggleClass('shown');
   });
   $('#newgame').click(() => {
+    end = true;
     newGame();
-    clearInterval(timerVar);
-    turn();
   });
 });
