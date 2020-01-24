@@ -149,66 +149,57 @@ function gameOver() {
   );
 }
 let win;
-let end;
-function timer() {
-  let seconds = 0;
-  let minutes = 0;
-  const timerVar = setInterval(() => {
-    seconds += 1;
-    if (seconds === 60) {
-      minutes += 1;
-      seconds = 0;
+let seconds = 0;
+let minutes = 0;
+let end = false;
+const timerVar = setInterval(() => {
+  seconds += 1;
+  if (seconds === 60) {
+    minutes += 1;
+    seconds = 0;
+  }
+  if (win) {
+    if (minutes > 10 && seconds > 10) {
+      $('.win-time').append(`<span class = "attemptsBox">00:${minutes}:${seconds}</span>`);
+    } else if (minutes < 10 && seconds < 10) {
+      $('.win-time').append(`<span class = "attemptsBox">00:0${minutes}:0${seconds}</span>`);
+    } else if (minutes < 10 && seconds > 10) {
+      $('.win-time').append(`<span class = "attemptsBox">00:0${minutes}:${seconds}</span>`);
+    } else if (minutes > 10 && seconds < 10) {
+      $('.win-time').append(`<span class = "attemptsBox">00:${minutes}:0${seconds}</span>`);
     }
-    if (end) {
-      clearInterval(timerVar);
-    }
-    if (win) {
-      if (minutes > 10 && seconds > 10) {
-        $('.win-time').append(`<span class = "attemptsBox">00:${minutes}:${seconds}</span>`);
-      } else if (minutes < 10 && seconds < 10) {
-        $('.win-time').append(`<span class = "attemptsBox">00:0${minutes}:0${seconds}</span>`);
-      } else if (minutes < 10 && seconds > 10) {
-        $('.win-time').append(`<span class = "attemptsBox">00:0${minutes}:${seconds}</span>`);
-      } else if (minutes > 10 && seconds < 10) {
-        $('.win-time').append(`<span class = "attemptsBox">00:${minutes}:0${seconds}</span>`);
-      }
-      clearInterval(timerVar);
-    }
-    
-    if (seconds / 10 < 1 && minutes / 10 < 1) {
-      $('.timer').replaceWith(
-        `<div class = "timer" id = "storage"><span class = "timer_text">00:0${minutes}:0${seconds}</span></div> `,
-      );
-    } else if (seconds / 10 > 1 && minutes / 10 < 1) {
-      $('.timer').replaceWith(
-        `<div class = "timer" ><span class = "timer_text">00:0${minutes}:${seconds}</span></div> `,
-      );
-    } else if (minutes / 10 > 1 && seconds / 10 < 1) {
-      $('.timer').replaceWith(
-        `<div class = "timer"><span class = "timer_text">00:${minutes}:0${seconds}<span></div> `,
-      );
-    } else if (minutes / 10 === 1 && seconds / 10 === 1) {
-      $('.timer').replaceWith(
-        `<div class = "timer"><span class = "timer_text">00:${minutes}:${seconds}</span></div> `,
-      );
-    } else if (minutes / 10 === 1 && seconds / 10 < 1) {
-      $('.timer').replaceWith(
-        `<div class = "timer"><span class = "timer_text">00:${minutes}:0${seconds}</span></div> `,
-      );
-    } else if (minutes / 10 < 1 && seconds / 10 === 1) {
-      $('.timer').replaceWith(
-        `<div class = "timer"><span class = "timer_text">00:0${minutes}:${seconds}</span></div> `,
-      );
-    }
-    
-  }, 1000);
-  timerVar;
-}
+    clearInterval(timerVar);
+  }
+
+  if (seconds / 10 < 1 && minutes / 10 < 1) {
+    $('.timer').replaceWith(
+      `<div class = "timer" id = "storage"><span class = "timer_text">00:0${minutes}:0${seconds}</span></div> `,
+    );
+  } else if (seconds / 10 > 1 && minutes / 10 < 1) {
+    $('.timer').replaceWith(
+      `<div class = "timer" ><span class = "timer_text">00:0${minutes}:${seconds}</span></div> `,
+    );
+  } else if (minutes / 10 > 1 && seconds / 10 < 1) {
+    $('.timer').replaceWith(
+      `<div class = "timer"><span class = "timer_text">00:${minutes}:0${seconds}<span></div> `,
+    );
+  } else if (minutes / 10 === 1 && seconds / 10 === 1) {
+    $('.timer').replaceWith(
+      `<div class = "timer"><span class = "timer_text">00:${minutes}:${seconds}</span></div> `,
+    );
+  } else if (minutes / 10 === 1 && seconds / 10 < 1) {
+    $('.timer').replaceWith(
+      `<div class = "timer"><span class = "timer_text">00:${minutes}:0${seconds}</span></div> `,
+    );
+  } else if (minutes / 10 < 1 && seconds / 10 === 1) {
+    $('.timer').replaceWith(
+      `<div class = "timer"><span class = "timer_text">00:0${minutes}:${seconds}</span></div> `,
+    );
+  }
+}, 1000);
 
 function turn() {
-  win = false;
-  end = false;
-  timer();
+  timerVar;
   $('.game-status').empty();
   $('.cell').on({
     rightclick() {
@@ -252,7 +243,7 @@ function turn() {
         revealNeighbourCells(cellRow, cellCol);
         if (userWins()) {
           win = true;
-          
+
           const cellRow = parseInt(
             $(this)
               .data('order')
@@ -280,6 +271,10 @@ $(document).ready(() => {
     $('#hardLvl').removeClass('active-field');
     $('#easyLvl').addClass('active-field');
     createField(9, 9, 10);
+    if (!end) {
+      clearInterval(timerVar);
+      end = false;
+    } else end = true;
     checkpoint = true;
     turn();
   });
@@ -289,6 +284,10 @@ $(document).ready(() => {
     $('#hardLvl').removeClass('active-field');
     $('#mediumLvl').addClass('active-field');
     checkpoint = true;
+    if (!end) {
+      clearInterval(timerVar);
+      end = false;
+    } else end = true;
     turn();
   });
   $('#hardLvl').click(() => {
@@ -296,8 +295,12 @@ $(document).ready(() => {
     $('#easyLvl').removeClass('active-field');
     $('#mediumLvl').removeClass('active-field');
     $('#hardLvl').addClass('active-field');
-
     checkpoint = true;
+    if (!end) {
+      clearInterval(timerVar);
+      end = false;
+    } else end = true;
+    clearInterval(timerVar);
     turn();
   });
 
@@ -306,7 +309,7 @@ $(document).ready(() => {
   });
   $('#newgame').click(() => {
     newGame();
-    
+    clearInterval(timerVar);
     turn();
   });
 });
