@@ -27,6 +27,7 @@ let end;
 let rows;
 let columns;
 let checkpoint = true;
+let bombed = false;
 
 function remove(arr, value) {
   for (let i = 0; i < arr.length; i += 1) {
@@ -47,10 +48,7 @@ function checkIfHasMines(i1, i2) {
   return false;
 }
 function checkIfHasMinesObject() {
-  if (parseInt($(this).attr('data-mined'), 2) === 1) {
-    return true;
-  }
-  return false;
+  return parseInt($(this).attr('data-mined'), 2) === 1;
 }
 
 function revealCell(row, coll) {
@@ -108,7 +106,7 @@ function createField(rows_, columns_, mines_) {
       $(`.row-${i}`).append(`<div class = "cell cell-not_opened" data-order = '${i}_${j}'></div>`);
     }
   }
-checkpoint = true;
+  checkpoint = true;
   createMines();
 }
 
@@ -161,7 +159,6 @@ function gameOver() {
   $('.footer_btn').removeClass('hidden');
 }
 
-let bombed = false;
 function turn() {
   seconds = 0;
   minutes = 0;
@@ -169,7 +166,7 @@ function turn() {
   clearInterval(timerVar);
   timerVar = setInterval(() => {
     seconds += 1;
-    if (seconds === 60) {
+    if (seconds >= 60) {
       minutes += 1;
       seconds = 0;
     }
@@ -265,19 +262,8 @@ function turn() {
         );
         revealNeighbourCells(cellRow, cellCol);
         if (userWins()) {
-          win = true;
-
+          win = true; 
           $('.footer_btn').removeClass('hidden');
-          const cellRow = parseInt(
-            $(this)
-              .data('order')
-              .split('_')[0],
-          );
-          const cellCol = parseInt(
-            $(this)
-              .data('order')
-              .split('_')[1],
-          );
           $('.bomb-pic').addClass('shown');
           $('.cell').bind('click', () => false);
           $('body').append(
@@ -308,7 +294,7 @@ $(document).ready(() => {
   });
   $('#hardLvl').click(() => {
     createField(16, 30, 99);
-    
+
     $('#newgame').addClass('hidden');
     $('#easyLvl').removeClass('active-field');
     $('#mediumLvl').removeClass('active-field');
